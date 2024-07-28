@@ -1,0 +1,61 @@
+.dg.ac {
+  z-index: 3 !important;
+}
+.dg.ac .dg.main.a,
+.dg.ac .dg.main.a .close-button.close-bottom {
+  width: 25em !important;
+}
+
+.cr.sprog {
+  height: auto !important;
+  border-left: 3px solid #229cfd;
+  position: relative;
+}
+
+.cr.sprog .timerWarn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #613500ed;
+  font-weight: bolder;
+  display: flex;
+  font-size: 1.3em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.cr.sprog progress {
+  width: 100%;
+}
+
+.cr.sprog div {
+  font-size: 1.2em;
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.dg.credit-container ul:not(.closed) .cr.credit {
+  height: 100% !important;
+}
+
+
+.cr.credit div {
+  display: flex;
+  flex-direction: column;
+}
+
+.cr.credit .property-name {
+  width: inherit !important;
+}
+
+.cr.credit div .c {
+  width: auto;
+  padding: 0 5px 0 0;
+}
+
+.cr.credit .c * {
+  text-align: center;
+}

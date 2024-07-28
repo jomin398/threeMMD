@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        font-size: 16px;
+        margin: 0;
+      }
+      textarea {
+        background-color: transparent;
+        margin-bottom: 1em;
+      }
+      .hide {
+        display: none !important;
+      }
+
+      form {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 1em;
+      }
+      form textarea {
+        white-space: pre-wrap;
+      }
+      section,
+      .tabs {
+        border: solid 2px white;
+        padding: 0.8em;
+      }
+      section > div {
+        display: flex;
+        flex-direction: column;
+        margin-left: 1em;
+      }
+      section > h4 {
+        margin-left: 1em;
+      }
+      .tabcontent,
+      .dlight,
+      .alight {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+      }
+      @media (orientation: portrait) and (max-width: 768px) {
+        form {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: black;
+          color: white;
+        }
+        textarea {
+          border: 2px solid white;
+        }
+        .active {
+          background-color: #949494;
+          color: black;
+        }
+        section,
+        .tabs {
+          border: solid 2px white;
+        }
+      }
+      /* Style rules for light mode */
+      @media (prefers-color-scheme: light) {
+        body {
+          background-color: white;
+          color: black;
+        }
+        textarea {
+          border: 2px solid black;
+        }
+        .active {
+          background-color: #949494;
+          color: white;
+        }
+        section,
+        .tabs {
+          border: solid 2px black;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    
+    <form>
+      <h3>렌더링 요청서 작성 툴</h3>
+      <div class="tabs">
+        <h4>목차</h4>
+        <div class="tablink active">기본설정</div>
+        <div class="tablink">캐릭터</div>
+        <div class="tablink">스테이지</div>
+        <div class="tablink">광원</div>
+        <div class="tablink">생성</div>
+      </div>
+      <section id="normalSetting" class="tabcontent">
+        <h3>기본 설정</h3>
+        <div>
+          <div>
+            <label for="auto-position">모델 자동 위치선정</label>
+            <input type="checkbox" id="auto-position" />
+          </div>
+          <label for="audio-url">오디오 파일 경로</label>
+          <input
+            type="url"
+            id="audio-url"
+            value="https://cdn.jsdelivr.net/gh/jomin398/mySongDB@master/audios/wavefile/[初音ミク] WAVEFILE (full ver by LamazeP).mp3"
+          />
+          <label for="audio-offset">오디오 오프셋</label>
+          <input type="number" id="audio-offset" value="0" />
+          <label for="camera-url">카메라모션 파일</label>
+          <input
+            type="url"
+            id="camera-url"
+            placeholder="카메라 모션 URL을 입력하세요."
+          />
+          <br />
+          <input type="reset" value="전체 폼을 리셋" />
+        </div>
+      </section>
+      <section id="character" class="tabcontent">
+        <!-- 캐릭터 설정창 내용 -->
+        <h3>케릭터 설정</h3>
+        <div>
+          <input
+            type="url"
+            id="curl"
+            placeholder="URL을 입력하세요."
+            value="https://cdn.jsdelivr.net/gh/jomin398/mmd_bk@master/model/miku/TDA/V4X.zip"
+          />
+        </div>
+        <h4>위치 좌표</h4>
+        <div>
+          <label for="cpos">위치 설정 (x,y,z):</label>
+          <input type="text" id="cpos" name="cpos" />
+        </div>
+        <h4>각도</h4>
+        <div>
+          <label for="crot">각도 설정 (x,y,z):</label>
+          <input type="text" id="crot" name="crot" />
+          <input id="addButton" type="button" value="추가하기" />
+        </div>
+        <h4>모션</h4>
+        <div>
+          <input
+            type="url"
+            id="cmurl"
+            placeholder="Motion Url을 입력하세요."
+            value="https://github.com/jomin398/mySongDB/raw/master/audios/wavefile/Motion (full ver by hino).vmd"
+          />
+        </div>
+        <div id="bundle"></div>
+      </section>
+      <section id="stage" class="tabcontent">
+        <!-- 스테이지 설정창 내용 -->
+        <h3>스테이지 설정</h3>
+        <div>
+          <input
+            type="url"
+            id="surl"
+            placeholder="URL을 입력하세요."
+            value="https://cdn.jsdelivr.net/gh/jomin398/mmd_bk@master/stage/13thStage.zip"
+          />
+        </div>
+        <h4>위치 좌표</h4>
+        <div>
+          <label for="spos">위치 설정 (x,y,z):</label>
+          <input type="text" id="spos" name="spos" />
+        </div>
+        <h4>각도</h4>
+        <div>
+          <label for="srot">각도 설정 (x,y,z):</label>
+          <input type="text" id="srot" name="srot" />
+        </div>
+      </section>
+      <section id="light" class="tabcontent">
+        <!-- 빛 설정창 내용 -->
+        <h3>광원 설정</h3>
+        <div class="dlight">
+          <h4>직광 (내리쬐는 빛)</h4>
+          <label for="dpos">위치 설정 (x,y,z):</label>
+          <input type="text" id="dpos" name="dpos" value="-50,100,50" />
+          <label for="drot">각도 설정 (x,y,z):</label>
+          <input type="text" id="drot" name="drot" />
+          <label for="dint"
+            >강도 (0.1 단위, 0.1 ~ 10): <span id="value">3</span></label
+          >
+          <input
+            type="range"
+            id="dint"
+            name="dint"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value="3"
+            oninput="updateSlide(this.id,this.value)"
+          />
+
+          <label for="drad"
+            >반지름 (10 단위, 10 ~ 1000): <span id="value">20</span></label
+          >
+          <input
+            type="range"
+            id="drad"
+            name="drad"
+            min="10"
+            max="1000"
+            step="10"
+            value="20"
+            oninput="updateSlide(this.id,this.value)"
+          />
+
+          <label for="dfar"
+            >빛의 한계 거리 (100 단위, 100 ~ 2000):
+            <span id="value">200</span></label
+          >
+          <input
+            type="range"
+            id="dfar"
+            name="dfar"
+            min="100"
+            max="2000"
+            step="100"
+            value="200"
+            oninput="updateSlide(this.id,this.value)"
+          />
+
+          <label for="dquality">품질 선택:</label>
+          <select id="dquality" name="dquality">
+            <option value="1024">1024</option>
+            <option value="2048">2048</option>
+            <option value="4096" selected>4096</option>
+            <option value="8192">8192</option>
+          </select>
+        </div>
+        <div class="alight">
+          <h4>주변광 (배경 빛)</h4>
+          <label for="aint"
+            >강도 (0.1 단위, 0.1 ~ 10): <span id="value">3</span></label
+          >
+          <input
+            type="range"
+            id="aint"
+            name="aint"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value="3"
+            oninput="updateSlide(this.id,this.value)"
+          />
+        </div>
+      </section>
+      <section id="genarate" class="tabcontent">
+        <h3>설정 파일 생성 및 최종 확인</h3>
+        <input
+          type="button"
+          value="목차로 가기"
+          onclick="document.querySelector('form .tabs').scrollIntoView()"
+        />
+        <input type="button" id="check" value="확인" onclick="preSubmit()" />
+        <textarea name="ini" id="ini" cols="20" rows="30"></textarea>
+        <input type="reset" value="전체 폼을 리셋" />
+      </section>
+    </form>
+    <script>
+      function updateSlide(id, val) {
+        document.querySelector(`label[for=${id}] #value`).innerText = val;
+      }
+
+      function preSubmit() {
+        const l = [
+          "input#auto-position",
+          "input#audio-url",
+          "input#audio-offset",
+          "input#camera-url",
+          "input#surl",
+          "input#spos",
+          "input#srot",
+          "input#dpos",
+          "input#drot",
+          "input#dint",
+          "input#drad",
+          "input#dfar",
+          "select#dquality",
+          "input#aint",
+        ];
+        const inputs = document.querySelectorAll(l.join(","));
+        const chars = document.querySelector(
+          "section#character #bundle"
+        ).children;
+        if (chars.length == 0) {
+          document.querySelector("section#character #addButton").click();
+        }
+        // console.log("preSubmit", inputs, chars);
+
+        // ini 파일 생성을 위한 객체 초기화
+        const ini = {
+          audio: "",
+          audioOffset: 0,
+          autoPosition: 0,
+          camera: null,
+          stage: {
+            model: "",
+            pos: [0, 0, 0],
+            rot: [0, 0, 0],
+          },
+          light: {
+            dpos: [0, 0, 0],
+            drot: [0, 0, 0],
+            dint: 3,
+            drad: 0,
+            dfar: 0,
+            dquality: 4096,
+            aint: 3,
+          },
+          chars: [],
+        };
+
+        for (let i = 0; i < chars.length; i++) {
+          const char = chars[i];
+          const url = char
+            .querySelector("p:nth-child(1)")
+            .textContent.split(": ")[1];
+          const position = char
+            .querySelector("p:nth-child(2)")
+            .textContent.split(": ")[1]
+            .replace(/\(|\)/g, "")
+            .split(",");
+          const rotation = char
+            .querySelector("p:nth-child(3)")
+            .textContent.split(": ")[1]
+            .replace(/\(|\)/g, "")
+            .split(",");
+          let motionUrl = char
+            .querySelector("p:nth-child(4)")
+            .textContent.split(": ")[1];
+          motionUrl = motionUrl == "" ? null : motionUrl;
+          // console.log(url, position, rotation);
+          // console.log(motionUrl);
+          ini.chars.push({
+            model: url,
+            pos: position,
+            rot: rotation,
+            motion: motionUrl,
+          });
+        }
+        // 입력값 추출 및 ini 객체에 할당
+        inputs.forEach((input) => {
+          const id = input.id;
+          const value = input.value;
+          if (id === "audio-url") {
+            ini.audio = value;
+          } else if (id === "auto-position") {
+            ini.autoPosition = input.checked ? 1 : 0 ?? 0;
+          } else if (id === "audio-offset") {
+            ini.audioOffset = value || 0;
+          } else if (id === "camera-url") {
+            ini.camera = value;
+          } else if (id === "surl") {
+            ini.stage.model = value;
+          } else if (id === "spos") {
+            ini.stage.pos = value != "" ? value.split(",") : [0, 0, 0];
+          } else if (id === "srot") {
+            ini.stage.rot = value != "" ? value.split(",") : [0, 0, 0];
+          } else if (id === "dpos") {
+            ini.light.dpos = value != "" ? value.split(",") : [0, 0, 0];
+          } else if (id === "drot") {
+            ini.light.drot = value != "" ? value.split(",") : [0, 0, 0];
+          } else if (id === "dint") {
+            ini.light.dint = parseInt(value);
+          } else if (id === "drad") {
+            ini.light.drad = parseInt(value);
+          } else if (id === "dfar") {
+            ini.light.dfar = value;
+          } else if (id == "dquality") {
+            ini.light.dquality = parseInt(value);
+          } else if (id === "aint") {
+            ini.light.aint = parseInt(value);
+          }
+        });
+
+        // ini 파일 출력
+        let iniContent = `audio= "${ini.audio}"\n`;
+        if (ini.camera) iniContent += `camera= "${ini.camera}"\n`;
+        iniContent += `autoPosition= ${ini.autoPosition}\n`;
+        iniContent += `audioOffset= ${ini.audioOffset}\n\n`;
+
+        iniContent += `[stage]\n`;
+        iniContent += `model= "${ini.stage.model}"\n`;
+        iniContent += `pos= ${ini.stage.pos}\n`;
+        iniContent += `rot= ${ini.stage.rot}\n\n`;
+
+        iniContent += `[light]\n`;
+        iniContent += `dint= ${ini.light.dint}\n`;
+        iniContent += `dpos= ${ini.light.dpos}\n`;
+        iniContent += `drot= ${ini.light.drot}\n`;
+        iniContent += `drad= ${ini.light.drad}\n`;
+        iniContent += `dfar= ${ini.light.dfar}\n`;
+        iniContent += `dquality= ${ini.light.dquality}\n`;
+        iniContent += `aint= ${ini.light.aint}\n\n`;
+        for (let i = 0; i < ini.chars.length; i++) {
+          iniContent += `[chr_${i}]\n`;
+          iniContent += `model= "${ini.chars[i].model}"\n`;
+          if (ini.chars[i].motion)
+            iniContent += `motion= "${ini.chars[i].motion}"\n`;
+          iniContent += `pos= ${ini.chars[i].pos.join(",")}\n`;
+          iniContent += `rot= ${ini.chars[i].rot.join(",")}\n\n`;
+        }
+        let iniArea = document.querySelector("section#genarate textarea");
+        iniArea.value = iniContent;
+        let iniCheckBtn = document.querySelector("section#genarate #check");
+        iniCheckBtn.value = "저장";
+        iniCheckBtn.onclick = () => {
+          const name = ini.audio
+            .split("/")
+            .pop()
+            .replace(/\.\w{3}$/g, "");
+          const data = window.URL.createObjectURL(
+            new Blob([iniArea.value], { type: "plain/text" })
+          );
+
+          const link = document.createElement("a");
+          link.href = data;
+          link.download = name + ".ini";
+
+          // this is necessary as link.click() does not work on the latest firefox
+          link.dispatchEvent(
+            new MouseEvent("click", {
+              bubbles: true,
+              cancelable: true,
+              view: window,
+            })
+          );
+
+          setTimeout(() => {
+            // For Firefox it is necessary to delay revoking the ObjectURL
+            window.URL.revokeObjectURL(data);
+            link.remove();
+          }, 100);
+        };
+        //console.log(iniContent);
+      }
+
+      //add button event as run iife.
+      (() => {
+        const tabLinks = document.querySelectorAll(".tablink");
+        tabLinks.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            // 클릭한 탭의 인덱스를 가져옵니다.
+            const tabIndex = Array.from(tabLinks).indexOf(tab);
+            // 모든 탭 링크를 비활성화
+            var tablinks = document.getElementsByClassName("tablink");
+            for (var i = 0; i < tablinks.length; i++) {
+              tablinks[i].classList.remove("active");
+            }
+
+            // 선택된 탭 컨텐츠를 보여주고, 선택된 탭 링크를 활성화
+            tab.classList.remove("hide");
+            tab.classList.add("active");
+
+            // 스크롤할 대상 요소를 선택합니다. (여기서는 'section#stage'를 선택했습니다.)
+            const targetElement = document.querySelector(
+              [
+                "section#normalSetting",
+                "section#character",
+                "section#stage",
+                "section#light",
+                "section#genarate",
+              ][tabIndex]
+            );
+
+            // 스크롤 위치로 스크롤합니다.
+            targetElement.scrollIntoView();
+          });
+        });
+
+        document
+          .querySelector("section#character #addButton")
+          .addEventListener("click", function () {
+            let url = document.getElementById("curl").value;
+            let murl = document.getElementById("cmurl").value;
+            let cpos =
+              document.getElementById("cpos").value != ""
+                ? document.getElementById("cpos").value.split(",")
+                : [0, 0, 0];
+            let crot =
+              document.getElementById("crot").value != ""
+                ? document.getElementById("cpos").value.split(",")
+                : [0, 0, 0];
+
+            // 새로운 div를 생성합니다.
+            let newDiv = document.createElement("div");
+
+            // 새로운 div에 사용자가 입력한 정보를 추가합니다.
+            newDiv.innerHTML = `
+          <p>URL: ${url}</p>
+          <p>Position: (${cpos.join(",")})</p>
+          <p>Rotation: (${crot.join(",")})</p>
+          <p>Motion: ${murl}</p>
+      `;
+
+            // 묶음(div)에 새로운 div를 추가합니다.
+            document.getElementById("bundle").appendChild(newDiv);
+          });
+      })();
+    </script>
+  </body>
+</html>

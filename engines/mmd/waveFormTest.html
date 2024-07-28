@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@latest/+esm",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      await new Promise((r) => (window.onload = () => r(1)));
+      // 버튼 클릭 시 오디오 및 렌더링 시작
+      document
+        .getElementById("start-button")
+        .addEventListener("click", function () {
+          // 오디오 컨텍스트와 분석기 생성
+          var AudioContext = window.AudioContext || window.webkitAudioContext;
+          var audioContext = new AudioContext();
+          var analyser = audioContext.createAnalyser();
+
+          // 오디오 소스 설정
+          var audio = new Audio();
+          audio.src = "../../assets/songs/Rough/Rough.mp3"; // 여기에 오디오 파일 경로 입력
+          var source = audioContext.createMediaElementSource(audio);
+          source.connect(analyser);
+          analyser.connect(audioContext.destination);
+
+          // 빈도 데이터를 담을 배열 생성
+          var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+          // Three.js 렌더러, 카메라, 장면 생성
+          var renderer = new THREE.WebGLRenderer();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          document.getElementById("canvas").appendChild(renderer.domElement);
+
+          var camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          camera.position.z = 150; // 카메라 위치 조정
+          let controls = new OrbitControls(camera, renderer.domElement);
+          let scene = new THREE.Scene();
+          let audioEQBars = new THREE.Group();
+          // 100x100 공간에 막대기 생성
+          for (let i = 0; i < 100; i++) {
+            for (let j = 0; j < 100; j++) {
+              let geometry = new THREE.BoxGeometry(100, 1, 1);
+              var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+              // 그라데이션 색상 및 뒷면 렌더링 안 함
+              
+              // let material = new THREE.MeshBasicMaterial({
+              //   color: new THREE.Color("hsl(" + i * 4 + ", 100%, 50%)"),
+              //   side: THREE.FrontSide,
+              // });
+              let cube = new THREE.Mesh(geometry, material);
+              cube.position.set(i - 50, j - 50, 0);
+              audioEQBars.add(cube);
+            }
+          }
+          scene.add(audioEQBars);
+
+          // 렌더링 루프
+          function render() {
+            requestAnimationFrame(render);
+
+            // 분석기를 사용하여 빈도 데이터 가져오기
+            analyser.getByteFrequencyData(frequencyData);
+
+            //막대기 업데이트
+            for (var i = 0; i < audioEQBars.children.length; i++) {
+              var value = frequencyData[i];
+              //scene.children[i].scale.z = value;
+              audioEQBars.children[i].scale.y = value * 0.5;
+            }
+            controls.update();
+            // 렌더링
+            renderer.render(scene, camera);
+          }
+          render();
+
+          // 오디오 재생 시작
+          audio.play();
+        });
+    </script>
+  </head>
+  <body>
+    <button id="start-button">재생 시작</button>
+    <div id="canvas"></div>
+  </body>
+</html>
